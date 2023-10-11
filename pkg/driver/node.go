@@ -181,6 +181,10 @@ func (d *nodeService) NodeStageVolume(ctx context.Context, req *csi.NodeStageVol
 	if err != nil {
 		return nil, err
 	}
+	ext4FastCommit, err := recheckFormattingOptionParameter(context, Ext4FastCommitKey, FileSystemConfigs, fsType)
+	if err != nil {
+		return nil, err
+	}
 
 	mountOptions := collectMountOptions(fsType, mountVolume.MountFlags)
 
@@ -272,6 +276,9 @@ func (d *nodeService) NodeStageVolume(ctx context.Context, req *csi.NodeStageVol
 	}
 	if len(ext4ClusterSize) > 0 {
 		formatOptions = append(formatOptions, "-C", ext4ClusterSize)
+	}
+	if ext4FastCommit == "true" {
+		formatOptions = append(formatOptions, "-O", "fast_commit")
 	}
 	err = d.mounter.FormatAndMountSensitiveWithFormatOptions(source, target, fsType, mountOptions, nil, formatOptions)
 	if err != nil {

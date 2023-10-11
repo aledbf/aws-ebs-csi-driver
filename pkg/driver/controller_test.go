@@ -1747,6 +1747,13 @@ func TestCreateVolumeWithFormattingParameters(t *testing.T) {
 			},
 			errExpected: true,
 		},
+		{
+			name: "success with ext4 fast commit option",
+			formattingOptionParameters: map[string]string{
+				Ext4FastCommitKey: "true",
+			},
+			errExpected: false,
+		},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
