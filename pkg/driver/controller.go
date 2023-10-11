@@ -143,6 +143,7 @@ func (d *controllerService) CreateVolume(ctx context.Context, req *csi.CreateVol
 		numberOfInodes  string
 		ext4BigAlloc    bool
 		ext4ClusterSize string
+		ext4FastCommit  bool
 	)
 
 	tProps := new(template.PVProps)
@@ -218,6 +219,10 @@ func (d *controllerService) CreateVolume(ctx context.Context, req *csi.CreateVol
 				return nil, status.Errorf(codes.InvalidArgument, "Could not parse ext4ClusterSize (%s): %v", value, err)
 			}
 			ext4ClusterSize = value
+		case Ext4FastCommitKey:
+			if value == "true" {
+				ext4FastCommit = true
+			}			
 		default:
 			if strings.HasPrefix(key, TagKeyPrefix) {
 				scTags = append(scTags, value)
@@ -268,6 +273,13 @@ func (d *controllerService) CreateVolume(ctx context.Context, req *csi.CreateVol
 
 	if !ext4BigAlloc && len(ext4ClusterSize) > 0 {
 		return nil, status.Errorf(codes.InvalidArgument, "Cannot set ext4BigAllocClusterSize when ext4BigAlloc is false")
+	}
+
+	if ext4FastCommit {
+		responseCtx[Ext4FastCommitKey] = "true"
+		if err = validateVolumeCapabilities(req.GetVolumeCapabilities(), Ext4FastCommitKey, FileSystemConfigs); err != nil {
+			return nil, err
+		}
 	}
 
 	if blockExpress && volumeType != cloud.VolumeTypeIO2 {

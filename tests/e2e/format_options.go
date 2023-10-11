@@ -16,6 +16,7 @@ package e2e
 
 import (
 	"fmt"
+
 	ebscsidriver "github.com/kubernetes-sigs/aws-ebs-csi-driver/pkg/driver"
 	"github.com/kubernetes-sigs/aws-ebs-csi-driver/tests/e2e/driver"
 	"github.com/kubernetes-sigs/aws-ebs-csi-driver/tests/e2e/testsuites"
@@ -59,6 +60,11 @@ var (
 			CreateVolumeParameters: map[string]string{
 				ebscsidriver.Ext4BigAllocKey:    "true",
 				ebscsidriver.Ext4ClusterSizeKey: "16384",
+			},
+		},
+		ebscsidriver.Ext4FastCommitKey: {
+			CreateVolumeParameters: map[string]string{
+				ebscsidriver.Ext4FastCommitKey: "true",
 			},
 		},
 	}

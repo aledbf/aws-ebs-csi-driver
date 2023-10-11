@@ -103,6 +103,9 @@ const (
 	// TagKeyPrefix contains the prefix of a volume parameter that designates it as
 	// a tag to be attached to the resource
 	TagKeyPrefix = "tagSpecification"
+
+	// Ext4FastCommitKey enables the fast_commit option when formatting an ext4 volume
+	Ext4FastCommitKey = "ext4FastCommit"
 )
 
 // constants of keys in snapshot parameters
@@ -197,12 +200,14 @@ var (
 			NotSupportedParams: map[string]struct{}{
 				Ext4BigAllocKey:    {},
 				Ext4ClusterSizeKey: {},
+				Ext4FastCommitKey:  {},
 			},
 		},
 		FSTypeExt3: {
 			NotSupportedParams: map[string]struct{}{
 				Ext4BigAllocKey:    {},
 				Ext4ClusterSizeKey: {},
+				Ext4FastCommitKey:  {},
 			},
 		},
 		FSTypeExt4: {
@@ -214,6 +219,7 @@ var (
 				NumberOfInodesKey:  {},
 				Ext4BigAllocKey:    {},
 				Ext4ClusterSizeKey: {},
+				Ext4FastCommitKey:  {},
 			},
 		},
 		FSTypeNtfs: {
@@ -224,6 +230,7 @@ var (
 				NumberOfInodesKey:  {},
 				Ext4BigAllocKey:    {},
 				Ext4ClusterSizeKey: {},
+				Ext4FastCommitKey:  {},
 			},
 		},
 	}
