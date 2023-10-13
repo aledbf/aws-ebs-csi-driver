@@ -105,7 +105,7 @@ const (
 	TagKeyPrefix = "tagSpecification"
 
 	// Ext4FastCommitKey enables the fast_commit option when formatting an ext4 volume
-	Ext4FastCommitKey = "ext4FastCommit"
+	Ext4FastCommitKey = "ext4fastcommit"
 )
 
 // constants of keys in snapshot parameters
