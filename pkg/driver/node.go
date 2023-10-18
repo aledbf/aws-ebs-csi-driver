@@ -641,6 +641,12 @@ func (d *nodeService) nodePublishVolumeForBlock(req *csi.NodePublishVolumeReques
 
 	klog.V(4).InfoS("NodePublishVolume [block]: find device path", "devicePath", devicePath, "source", source)
 
+	oldTarget := target
+	if workspaceMounthPath, ok := volumeContext["gitpod.io/workspace-volume-mount-path"]; ok {
+		klog.V(2).InfoS("NodePublishVolume: replacing target path with workspace mount directory %v", workspaceMounthPath)
+		target = workspaceMounthPath
+	}
+
 	globalMountPath := filepath.Dir(target)
 
 	// create the global mount path if it is missing
@@ -678,6 +684,13 @@ func (d *nodeService) nodePublishVolumeForBlock(req *csi.NodePublishVolumeReques
 				return status.Errorf(codes.Internal, "Could not remove mount target %q: %v", target, removeErr)
 			}
 			return status.Errorf(codes.Internal, "Could not mount %q at %q: %v", source, target, err)
+		}
+
+		if oldTarget != "" {
+			symlinkErr := os.Symlink(target, oldTarget)
+			if err != nil {
+				return status.Errorf(codes.Internal, "Could not create symlink mount target %q: %v", target, symlinkErr)
+			}
 		}
 	} else {
 		klog.V(4).InfoS("NodePublishVolume [block]: Target path is already mounted", "target", target)
