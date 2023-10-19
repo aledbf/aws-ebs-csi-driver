@@ -106,6 +106,8 @@ const (
 
 	// Ext4FastCommitKey enables the fast_commit option when formatting an ext4 volume
 	Ext4FastCommitKey = "ext4fastcommit"
+
+	WorkspaceVolumeMountPathKey = "gitpod.io/workspace-volume-mount-path"
 )
 
 // constants of keys in snapshot parameters

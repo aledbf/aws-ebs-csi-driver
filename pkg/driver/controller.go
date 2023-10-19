@@ -144,6 +144,8 @@ func (d *controllerService) CreateVolume(ctx context.Context, req *csi.CreateVol
 		ext4BigAlloc    bool
 		ext4ClusterSize string
 		ext4FastCommit  bool
+
+		workspaceVolumeMountPath string
 	)
 
 	tProps := new(template.PVProps)
@@ -222,7 +224,10 @@ func (d *controllerService) CreateVolume(ctx context.Context, req *csi.CreateVol
 		case Ext4FastCommitKey:
 			if value == "true" {
 				ext4FastCommit = true
-			}			
+			}
+
+		case WorkspaceVolumeMountPathKey:
+			workspaceVolumeMountPath = value
 		default:
 			if strings.HasPrefix(key, TagKeyPrefix) {
 				scTags = append(scTags, value)
@@ -280,6 +285,10 @@ func (d *controllerService) CreateVolume(ctx context.Context, req *csi.CreateVol
 		if err = validateVolumeCapabilities(req.GetVolumeCapabilities(), Ext4FastCommitKey, FileSystemConfigs); err != nil {
 			return nil, err
 		}
+	}
+
+	if len(workspaceVolumeMountPath) > 0 {
+		responseCtx[WorkspaceVolumeMountPathKey] = workspaceVolumeMountPath
 	}
 
 	if blockExpress && volumeType != cloud.VolumeTypeIO2 {
